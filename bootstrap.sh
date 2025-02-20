@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-mkdir -p {easyrsa,ccd}
+mkdir -p /etc/openvpn/ccd
+mkdir -p /etc/openvpn/easyrsa
 
-cd easyrsa
+cd /etc/openvpn/easyrsa
 
 if [ ! -f easyrsa ]; then
   curl -sL https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.8/EasyRSA-3.0.8.tgz | tar -xzv --strip-components=1 -C .
