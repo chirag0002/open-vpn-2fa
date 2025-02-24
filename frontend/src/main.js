@@ -279,16 +279,19 @@ new Vue({
         link.click()
         URL.revokeObjectURL(link.href)
       }).catch(console.error);
-    })
+    })   
     _this.$root.$on('u-download-qrcode', function () {
-      const imagePath = `/google-auth/${_this.username}.png`;
-      fetch(imagePath)
-        .then(response => response.blob())
-        .then(blob => {
+      const url = `/api/qr-code/${_this.username}`;
+    
+      axios.get(url, { responseType: 'blob' })
+        .then(function (response) {
+          const blob = new Blob([response.data], { type: 'image/png' });
+    
           const link = document.createElement('a');
           link.href = URL.createObjectURL(blob);
-          link.download = _this.username + ".png";
+          link.download = _this.username + ".png"; 
           link.click();
+    
           URL.revokeObjectURL(link.href);
         })
         .catch(console.error);

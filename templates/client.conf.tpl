@@ -2,23 +2,48 @@
 remote {{ $server.Host }} {{ $server.Port }} {{ $server.Protocol }}
 {{- end }}
 
-verb 4
+#verb 4
+#client
+#nobind
+#dev tun
+#cipher AES-128-CBC
+#key-direction 1
+##redirect-gateway def1
+#tls-client
+#remote-cert-tls server
+## uncomment below lines for use with linux
+##script-security 2
+## if you use resolved
+##up /etc/openvpn/update-resolv-conf
+##down /etc/openvpn/update-resolv-conf
+## if you use systemd-resolved first install openvpn-systemd-resolved package
+##up /etc/openvpn/update-systemd-resolved
+##down /etc/openvpn/update-systemd-resolved
+
 client
-nobind
+route-nopull
+route 10.100.0.0/16
+route 10.0.0.0/16
+route 172.66.0.0/16
+route 13.211.60.242
+route 52.63.116.24
+proto udp
+explicit-exit-notify
 dev tun
-cipher AES-128-CBC
-key-direction 1
-#redirect-gateway def1
-tls-client
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
 remote-cert-tls server
-# uncomment below lines for use with linux
-#script-security 2
-# if you use resolved
-#up /etc/openvpn/update-resolv-conf
-#down /etc/openvpn/update-resolv-conf
-# if you use systemd-resolved first install openvpn-systemd-resolved package
-#up /etc/openvpn/update-systemd-resolved
-#down /etc/openvpn/update-systemd-resolved
+auth SHA256
+cipher AES-128-GCM
+tls-client
+tls-version-min 1.2
+tls-cipher TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256
+ignore-unknown-option block-outside-dns
+setenv opt block-outside-dns # Prevent Windows 10 DNS leak
+verb 3
+
 
 auth-user-pass
 auth-nocache
