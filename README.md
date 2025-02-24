@@ -4,9 +4,6 @@
 ```bash
 chmod +x setup/setup.sh
 sudo ./setup/setup.sh
-
-./setup/configure.sh
-./build.sh
 ```
 
 ---
@@ -14,21 +11,10 @@ sudo ./setup/setup.sh
 ## 🚀 Running the Application Manually
 You can run the application in the foreground:
 ```bash
+./build.sh
 ./ovpn-admin
+./setup/configure.sh
 ```
-To run it in the background:
-```bash
-./ovpn-admin &
-```
-To check if it's running:
-```bash
-ps aux | grep ovpn-admin
-```
-To stop it:
-```bash
-pkill -f ovpn-admin
-```
-
 ---
 
 ## 🔥 Running the Application as a Systemd Service
