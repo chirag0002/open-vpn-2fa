@@ -108,8 +108,7 @@ fi
 if [ ! -f "/etc/pam.d/openvpn" ]; then
   bash -c 'cat > /etc/pam.d/openvpn <<EOF
   auth    requisite       /usr/local/lib/security/pam_google_authenticator.so secret=/etc/google-auth/\${USER}  user=root
-  account    required     pam_permit.so
-  EOF'
+  account    required     pam_permit.so'
 fi
 
 if [ ! -f "/etc/openvpn/google-auth.sh" ]; then
@@ -129,8 +128,7 @@ if [ ! -f "/etc/openvpn/google-auth.sh" ]; then
   
   google-authenticator -t -d -f -r 3 -R 30 -W -C -s "/etc/google-auth/\${CLIENT}" || { echo -e "\${R}\${B}error generating QR code\${C}"; exit 1; }
   secret=\$(head -n 1 "/etc/google-auth/\${CLIENT}")
-  qrencode -t PNG -o "/etc/google-auth/\${CLIENT}.png" "otpauth://totp/\${CLIENT}@\${HOST}?secret=\${secret}&issuer=openvpn" || { echo -e "\${R}\${B}Error generating PNG\${C}"; exit 1; }
-  EOF'
+  qrencode -t PNG -o "/etc/google-auth/\${CLIENT}.png" "otpauth://totp/\${CLIENT}@\${HOST}?secret=\${secret}&issuer=openvpn" || { echo -e "\${R}\${B}Error generating PNG\${C}"; exit 1; }'
   
   sudo chmod +x /etc/openvpn/google-auth.sh
 fi
