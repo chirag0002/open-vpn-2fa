@@ -33,8 +33,7 @@ After=network.target
 [Service]
 ExecStart=/home/ubuntu/open-vpn-2fa/ovpn-admin
 Restart=always
-User=ubuntu
-WorkingDirectory=/home/ubuntu/open-vpn-2fa\
+WorkingDirectory=/home/ubuntu/open-vpn-2fa
 StandardOutput=append:/var/log/ovpn-admin.log
 StandardError=append:/var/log/ovpn-admin-error.log
 

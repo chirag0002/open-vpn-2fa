@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 set -ex
 
-EASY_RSA_LOC="/etc/openvpn/easyrsa"
+EASY_RSA_LOC="/etc/ovpn/easyrsa"
 SERVER_CERT="${EASY_RSA_LOC}/pki/issued/server.crt"
 
 OVPN_SRV_NET=${OVPN_SERVER_NET:-10.10.0.0}
 OVPN_SRV_MASK=${OVPN_SERVER_MASK:-255.255.255.0}
-OVPN_PASSWD_AUTH=false
 
 set -e
 
@@ -30,8 +29,8 @@ if [ -f "/usr/local/bin/openvpn-user-${TARGETARCH}" ]; then
   sudo ln -sf /usr/local/bin/openvpn-user-${TARGETARCH} /usr/local/bin/openvpn-user
 fi
 
-mkdir -p /etc/openvpn/easyrsa
-mkdir -p /etc/openvpn/ccd
+mkdir -p /etc/ovpn/easyrsa
+mkdir -p /etc/ovpn/ccd
 
 cd $EASY_RSA_LOC
 
@@ -64,17 +63,7 @@ if [ ! -c /dev/net/tun ]; then
     mknod /dev/net/tun c 10 200
 fi
 
-cp -f /home/ubuntu/open-vpn-2fa/setup/openvpn.conf /etc/openvpn/openvpn.conf
-
-if [ ${OVPN_PASSWD_AUTH} = "true" ]; then
-  mkdir -p /etc/openvpn/scripts/
-  cp -f /etc/openvpn/setup/auth.sh /etc/openvpn/scripts/auth.sh
-  chmod +x /etc/openvpn/scripts/auth.sh
-  echo "auth-user-pass-verify /etc/openvpn/scripts/auth.sh via-file" | tee -a /etc/openvpn/openvpn.conf
-  echo "script-security 2" | tee -a /etc/openvpn/openvpn.conf
-  echo "verify-client-cert require" | tee -a /etc/openvpn/openvpn.conf
-  openvpn-user db-init --db.path=$EASY_RSA_LOC/pki/users.db
-fi
+cp -f /home/ubuntu/ovpn/setup/openvpn.conf /etc/ovpn/openvpn.conf
 
 [ -d $EASY_RSA_LOC/pki ] && chmod 755 $EASY_RSA_LOC/pki
 [ -f $EASY_RSA_LOC/pki/crl.pem ] && chmod 644 $EASY_RSA_LOC/pki/crl.pem
@@ -111,11 +100,11 @@ if [ ! -f "/etc/pam.d/openvpn" ]; then
   account    required     pam_permit.so'
 fi
 
-if [ ! -f "/etc/openvpn/google-auth.sh" ]; then
+if [ ! -f "/etc/ovpn/google-auth.sh" ]; then
   sudo mkdir -p /etc/google-auth
   sudo chown -R root /etc/google-auth
 
-  sudo bash -c 'cat > /etc/openvpn/google-auth.sh <<EOF
+  sudo bash -c 'cat > /etc/ovpn/google-auth.sh <<EOF
   #!/bin/bash
   
   CLIENT=\$1
@@ -130,7 +119,7 @@ if [ ! -f "/etc/openvpn/google-auth.sh" ]; then
   secret=\$(head -n 1 "/etc/google-auth/\${CLIENT}")
   qrencode -t PNG -o "/etc/google-auth/\${CLIENT}.png" "otpauth://totp/\${CLIENT}@\${HOST}?secret=\${secret}&issuer=openvpn" || { echo -e "\${R}\${B}Error generating PNG\${C}"; exit 1; }'
   
-  sudo chmod +x /etc/openvpn/google-auth.sh
+  sudo chmod +x /etc/ovpn/google-auth.sh
 fi
 
-openvpn --config /etc/openvpn/openvpn.conf
+openvpn --config /etc/ovpn/openvpn.conf
